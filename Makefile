@@ -1,7 +1,16 @@
 CC=gcc
-CFLAGS=-Wall -D_GNU_SOURCE -O
-LD_LIBS=-lcrypto
-SOURCE=encrypt.c
+CFLAGS=-Wall -D_GNU_SOURCE -O -g
+LDLIBS=-lcrypto
+SOURCE=encrypt.c main.c
 OBJ=$(SOURCE:.c=.o)
+EXECUTABLE=ransom
 
-all: $(OBJ)
+.PHONY: all clean
+
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJ)
+	$(CC) $(LDFLAGS) $(OBJ) $(LOADLIBES) $(LDLIBS) -o $(EXECUTABLE)
+
+clean:
+	rm -f $(OBJ) $(EXECUTABLE)

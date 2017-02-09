@@ -38,8 +38,28 @@ void encryptFile(const char *name) {
 
 	handleErrors(status.ctx = EVP_CIPHER_CTX_new());
 	handleErrors(EVP_EncryptInit_ex(status.ctx, EVP_aes_256_cbc(), NULL, status.key, status.iv));
+	inFile = fopen(name, "rb+");
+	outFile = tmpfile();
 
-	handleErrors(EVP_EncryptFinal_ex(status.ctx, status.ciphertext + len, &len));
+	while (!feof(inFile)) {
+		len = fread(status.plaintext, 1, BLOCK_SIZE, inFile);
+		EVP_EncryptUpdate(status.ctx, status.ciphertext, &len, status.plaintext, len);
+
+		fwrite(status.ciphertext, 1, len, outFile);
+	}
+
+	handleErrors(EVP_EncryptFinal_ex(status.ctx, status.ciphertext, &len));
+	fwrite(status.ciphertext, 1, len, outFile);
+	inFile = freopen(NULL, "wb", inFile);
+	rewind(outFile);
+
+	while(!feof(outFile)) {
+		len = fread(status.ciphertext, 1, BLOCK_SIZE, outFile);
+		fwrite(status.ciphertext, 1, len, inFile);
+	}
+
+	fclose(inFile);
+	fclose(outFile);
 	EVP_CIPHER_CTX_free(status.ctx);
 }
 
