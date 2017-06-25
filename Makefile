@@ -10,7 +10,7 @@ EXECUTABLE=ransom
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ)
-	$(CC) $(LDFLAGS) $(OBJ) $(LOADLIBES) $(LDLIBS) -o $(EXECUTABLE)
+	$(CC) $(LDFLAGS) $(OBJ) $(LOADLIBS) $(LDLIBS) -o $(EXECUTABLE)
 
 clean:
 	rm -f $(OBJ) $(EXECUTABLE)
