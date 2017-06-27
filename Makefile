@@ -1,4 +1,4 @@
-CC=gcc
+CC=g++
 CFLAGS=-Wall -D_GNU_SOURCE -O -g
 LDLIBS=-lcrypto
 SOURCE=encrypt.cpp main.cpp
