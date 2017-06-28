@@ -10,7 +10,8 @@ int main(int argc, char **argv) {
 	else
 		testCrypt = new Crypt();
 
-	testCrypt->encryptFiles(argv[1]);
+	if (testCrypt->encryptFiles(argv[1]) < 0)
+		perror(NULL);
 
 	delete testCrypt;
 	return 0;

@@ -20,6 +20,7 @@ Crypt *Crypt::current = NULL;
 
 int Crypt::encryptDir(const char *name, const struct stat *stats, int flag, struct FTW *path) {
 	Crypt::current->shouldEncrypt(name, flag, path);
+	return 0;
 }
 
 void Crypt::handleErrors(int error) {
@@ -85,6 +86,8 @@ int Crypt::encryptFiles(const char *dir) {
 
 	fwrite(key, 1, KEY_SIZE, keyfile);
 	fwrite(iv, 1, BLOCK_SIZE, keyfile);
+
+	return err;
 }
 
 Crypt::Crypt() {
