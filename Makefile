@@ -3,7 +3,7 @@ CFLAGS=-Wall -D_GNU_SOURCE -O -g
 LDLIBS=-lcrypto
 SOURCE=encrypt.c main.c
 OBJ=$(SOURCE:.c=.o)
-EXECUTABLE=ransom
+EXECUTABLE=ransom.out
 
 .PHONY: all clean
 
