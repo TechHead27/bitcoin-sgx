@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "wallet.cpp"
+#include "wallet.h"
 
 using namespace bc;
 

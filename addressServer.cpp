@@ -6,7 +6,7 @@
 #include <bitcoin/client.hpp>
 #include <zmq.hpp>
 
-#include "wallet.cpp"
+#include "wallet.h"
 using namespace bc;
 
 const int port = 49529; // randomly selected from unreserved range
