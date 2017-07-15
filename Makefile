@@ -1,9 +1,9 @@
 CC=g++
-CXXFLAGS=-Wall -D_GNU_SOURCE 
-LDLIBS=-lcrypto
-SOURCE=encrypt.cpp main.cpp
+CXXFLAGS=-Wall -D_GNU_SOURCE $(shell pkg-config --cflags libbitcoin-client)
+LDLIBS=-lcrypto $(shell pkg-config --libs libbitcoin-client)
+SOURCE=$(wildcard *.cpp)
 OBJ=$(SOURCE:.cpp=.o)
-EXECUTABLE=ransom.out
+EXECUTABLE=ransom
 
 Debug: CXXFLAGS += -Og -g
 
