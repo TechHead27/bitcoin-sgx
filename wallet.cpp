@@ -6,6 +6,7 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 using namespace bc;
 
 class Wallet
@@ -40,6 +41,15 @@ public:
 		privateKey = wallet::hd_private(seed, wallet::hd_private::testnet);
 		publicKey = privateKey.to_public();
 	}
+
+    Wallet(const std::string& filename)
+    {
+        std::string mnemonic;
+        std::ifstream in(filename);
+
+        in >> mnemonic;
+        Wallet(split(mnemonic));
+    }
 
 	//display output
 	void dumpKeys()

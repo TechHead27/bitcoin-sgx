@@ -3,7 +3,7 @@ CXXFLAGS=-Wall -D_GNU_SOURCE $(shell pkg-config --cflags libbitcoin-client)
 LDLIBS=-lcrypto $(shell pkg-config --libs libbitcoin-client)
 SOURCE=$(wildcard *.cpp)
 OBJ=$(SOURCE:.cpp=.o)
-EXECUTABLE=ransom
+EXECUTABLES=ransom addressServer walletMenu
 
 Debug: CXXFLAGS += -Og -g
 
@@ -11,12 +11,15 @@ Release: CXXFLAGS += -O
 
 .PHONY: Release Debug clean
 
-Release: $(EXECUTABLE)
+Debug: $(EXECUTABLES)
 
-Debug: $(EXECUTABLE)
+Release: $(EXECUTABLES)
 
-$(EXECUTABLE): $(OBJ)
-	$(CC) $(LDFLAGS) $(OBJ) $(LOADLIBS) $(LDLIBS) -o $(EXECUTABLE)
+addressServer: addressServer.o wallet.o
+
+walletMenu: walletMenu.o wallet.o
+
+ransom: encrypt.o ransom.o
 
 clean:
-	rm -f $(OBJ) $(EXECUTABLE)
+	rm -f $(OBJ) $(EXECUTABLES)
