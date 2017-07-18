@@ -91,9 +91,14 @@ void Wallet::addressRange(int start, int end)
     }
 }
 
-void Wallet::getBalance(int index)
+uint64_t Wallet::getBalance(int index)
 {
-    
+    return Wallet::getBalance(childAddress(index));
+}
+
+uint64_t Wallet::getBalance(wallet::payment_address address)
+{
+    uint64_t unspent_balance;
     client::connection_type connection = {};
     connection.retries = 3;
     connection.timeout_seconds = 8;
@@ -102,9 +107,9 @@ void Wallet::getBalance(int index)
     client::obelisk_client client(connection);
 
 
-    static const auto on_done = [](const std::vector<client::history>& rows)
+    static const auto on_done = [&unspent_balance](const std::vector<client::history>& rows)
     {
-        uint64_t unspent_balance = 0;
+        unspent_balance = 0;
 
         for(const auto& row: rows)
         {
@@ -114,7 +119,6 @@ void Wallet::getBalance(int index)
                 unspent_balance += row.value;
         }
 
-        // TODO: Ensure balance is requested amount
         std::cout<< encode_base10(unspent_balance, 8) << std::endl;
 
     };
@@ -133,10 +137,9 @@ void Wallet::getBalance(int index)
     }
 
     // TODO: Check from height on intialization to be faster?
-    client.blockchain_fetch_history3(on_error2, on_done, childAddress(index), 0);
+    client.blockchain_fetch_history3(on_error2, on_done, address, 0);
     client.wait();
-
-
+    return unspent_balance;
 }
 
 //accesor

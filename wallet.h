@@ -1,3 +1,5 @@
+#pragma once
+
 #include <bitcoin/bitcoin.hpp>
 #include <bitcoin/client.hpp>
 #include <string.h>
@@ -28,7 +30,9 @@ public:
 	void displayAddress(int index);
 	void addressRange(int start, int end);
 
-	void getBalance(int index);
+	uint64_t getBalance(int index);
+
+	static uint64_t getBalance(wallet::payment_address address);
 
 	//accesor
 	wallet::hd_private childPrivateKey(int index);

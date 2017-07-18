@@ -7,9 +7,8 @@
 #include <zmq.hpp>
 
 #include "wallet.h"
+#include "addressServer.h"
 using namespace bc;
-
-const int port = 49529; // randomly selected from unreserved range
 
 std::mt19937 *seedRandom()
 {
