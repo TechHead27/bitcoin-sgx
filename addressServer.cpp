@@ -27,12 +27,14 @@ void startServer(Wallet *wallet)
         zmq::message_t request;
 
         socket.recv(&request);
+        std::cerr << "Recieved request" << std::endl;
 
         // Send random child address as string
         // According to zmq convention, don't send null byte
         std::string address = wallet->childAddress((*rand_gen)()).encoded();
-        zmq::message_t reply(address.size()-1);
-        address.copy((char*)reply.data(), address.size()-1);
+        std::cerr << "Sending address " << address << std::endl;
+        zmq::message_t reply(address.size());
+        address.copy((char*)reply.data(), address.size());
         socket.send(reply);
     }
 }
