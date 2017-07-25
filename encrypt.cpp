@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <fstream>
+#include <iostream>
 
 extern "C" {
 #include <ftw.h>
@@ -8,6 +10,7 @@ extern "C" {
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <openssl/rand.h>
+#include <openssl/bio.h>
 }
 
 #include "encrypt.h"
@@ -34,38 +37,34 @@ void Crypt::handleErrors(int error) {
 // Should probably set iv per file
 void Crypt::encryptFile(const char *name) {
 	FILE *inFile, *outFile;
-	int len;
-	EVP_CIPHER_CTX *ctx;
-	unsigned char plaintext[BLOCK_SIZE];
-	unsigned char ciphertext[BLOCK_SIZE];
+	int inLen, outLen;
+	BIO *out, *cipher;
+	unsigned char text[BLOCK_SIZE];
 
-	ctx = EVP_CIPHER_CTX_new();
-	if (!ctx)
-		handleErrors(0);
-	handleErrors(EVP_CipherInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv, enc));
 	inFile = fopen(name, "rb+");
 	outFile = tmpfile();
+    out = BIO_new_fp(outFile, BIO_NOCLOSE);
+    cipher = BIO_new(BIO_f_cipher());
+    BIO_set_cipher(cipher, EVP_aes_256_cbc(), key, iv, enc);
+    BIO_push(cipher, out);
 
 	while (!feof(inFile)) {
-		len = fread(plaintext, 1, BLOCK_SIZE, inFile);
-		EVP_CipherUpdate(ctx, ciphertext, &len, plaintext, len);
-
-		fwrite(ciphertext, 1, len, outFile);
+		inLen = fread(text, 1, BLOCK_SIZE, inFile);
+        BIO_write(cipher, text, inLen);
 	}
 
-	handleErrors(EVP_CipherFinal_ex(ctx, ciphertext, &len));
-	fwrite(ciphertext, 1, len, outFile);
+    BIO_flush(cipher);
+    BIO_free_all(cipher);
 	inFile = freopen(NULL, "wb", inFile);
 	rewind(outFile);
 
 	while(!feof(outFile)) {
-		len = fread(ciphertext, 1, BLOCK_SIZE, outFile);
-		fwrite(ciphertext, 1, len, inFile);
+		inLen = fread(text, 1, BLOCK_SIZE, outFile);
+		fwrite(text, 1, inLen, inFile);
 	}
 
 	fclose(inFile);
 	fclose(outFile);
-	EVP_CIPHER_CTX_free(ctx);
 }
 
 void Crypt::shouldEncrypt(const char *name, int flag, struct FTW *path) {
@@ -83,10 +82,13 @@ void Crypt::shouldEncrypt(const char *name, int flag, struct FTW *path) {
 
 int Crypt::encryptFiles(const char *dir) {
 	int err = nftw(dir, Crypt::encryptDir, descriptors, 0);
-	FILE *keyfile = fopen("keyfile", "wb");
+    std::ofstream keyfile("keyfile");
 
-	fwrite(key, 1, KEY_SIZE, keyfile);
-	fwrite(iv, 1, BLOCK_SIZE, keyfile);
+    keyfile.write((const char*)key, KEY_SIZE).write((const char*)iv, BLOCK_SIZE);
+    if (keyfile.fail()) {
+        std::cerr << "Failed to write key and iv" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
 	return err;
 }
@@ -101,10 +103,13 @@ Crypt::Crypt() {
 }
 
 Crypt::Crypt(char *keyfileName) {
-	FILE *keyfile = fopen(keyfileName, "rb");
+    std::ifstream keyfile("keyfile");
 
-	fread(key, 1, KEY_SIZE, keyfile);
-	fread(iv, 1, BLOCK_SIZE, keyfile);
+    keyfile.read((char*)key, KEY_SIZE).read((char*)iv, BLOCK_SIZE);
+    if (keyfile.fail()) {
+        std::cerr << "Failed to read key and iv" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
 	enc = 0;
 
