@@ -35,3 +35,6 @@
 # Editor files
 *.swp
 Session.vim
+
+# Dependency files
+*.d
