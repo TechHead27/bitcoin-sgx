@@ -35,11 +35,11 @@ public:
 	static uint64_t getBalance(wallet::payment_address address);
 
 	//accesor
-	wallet::hd_private childPrivateKey(int index);
+	wallet::hd_private childPrivateKey(uint32_t index);
 
-	wallet::hd_public childPublicKey(int index);
+	wallet::hd_public childPublicKey(uint32_t index);
 
-	wallet::payment_address childAddress(int index);
+	wallet::payment_address childAddress(uint32_t index);
 
 private:
 	//members

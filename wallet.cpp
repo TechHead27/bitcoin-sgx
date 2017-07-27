@@ -143,17 +143,21 @@ uint64_t Wallet::getBalance(wallet::payment_address address)
 }
 
 //accesor
-wallet::hd_private Wallet::childPrivateKey(int index)
+wallet::hd_private Wallet::childPrivateKey(uint32_t index)
 {
+    if (index >= (1 << 31)) // doesn't seem to work when this bit is set
+        index &= ~(1 << 31);
     return privateKey.derive_private(index);
 }
 
-wallet::hd_public Wallet::childPublicKey(int index)
+wallet::hd_public Wallet::childPublicKey(uint32_t index)
 {
+    if (index >= (1 << 31)) // doesn't seem to work when this bit is set
+        index &= ~(1 << 31);
     return publicKey.derive_public(index);
 }
 
-wallet::payment_address Wallet::childAddress(int index)
+wallet::payment_address Wallet::childAddress(uint32_t index)
 {
     return wallet::payment_address(wallet::ec_public(childPublicKey(index).point()), 0x6f);
 }
