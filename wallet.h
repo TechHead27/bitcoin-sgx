@@ -4,6 +4,8 @@
 #include <bitcoin/client.hpp>
 #include <string.h>
 #include <iostream>
+#include <exception>
+#include <execinfo.h>
 using namespace bc;
 
 class Wallet
@@ -49,4 +51,33 @@ private:
 	wallet::hd_private privateKey;
 	wallet::hd_public publicKey;
 
+};
+
+class MnemonicException : std::exception
+{
+    public:
+    const char *what() const noexcept 
+    {
+        void *bt[10];
+        char **strings;
+        int size = 10;
+        std::string str = "Mnemonic invalid at:\n";
+
+        size = backtrace(bt, size);
+        strings = backtrace_symbols(bt, size);
+
+        for (int i = 0; i < size; i++)
+        {
+            str += strings[i];
+            str += "\n";
+        }
+
+        free(strings);
+        return str.c_str();
+    }
+
+    /* const char *what() const noexcept */
+    /* { */
+    /*     return "Mnemonic invalid\n"; */
+    /* } */
 };

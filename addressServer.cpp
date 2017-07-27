@@ -81,7 +81,14 @@ int main(int argc, char *argv[])
     } else
     {
         std::cout << "Loading wallet from " << argv[1] << std::endl;
-        wallet = new Wallet(std::string(argv[1]));
+        try
+        {
+            wallet = new Wallet(std::string(argv[1]));
+        } catch (MnemonicException e)
+        {
+            std::cout << e.what();
+            exit(EXIT_FAILURE);
+        }
     }
 
     startServer(wallet);

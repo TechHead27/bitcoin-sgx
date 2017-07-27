@@ -32,6 +32,10 @@ Wallet::Wallet(const data_chunk Userentropy)
 
 Wallet::Wallet(const wallet::word_list mnemonicSeed)
 {
+    if (!wallet::validate_mnemonic(mnemonicSeed))
+    {
+        throw MnemonicException();
+    }
     seed = to_chunk(wallet::decode_mnemonic(mnemonicSeed));
     //seed = to_chunk(hashSeed);
     mnemonic = mnemonicSeed;
@@ -44,7 +48,7 @@ Wallet::Wallet(const std::string& filename)
     std::string mnemonic;
     std::ifstream in(filename);
 
-    in >> mnemonic;
+    std::getline(in, mnemonic);
     Wallet(split(mnemonic));
 }
 

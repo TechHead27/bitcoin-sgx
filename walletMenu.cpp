@@ -58,7 +58,7 @@ wallet::word_list getWordList()
     std::getline(cin, filename);
 
     file.open(filename);
-    file >> mnemonicSeed;
+    std::getline(file, mnemonicSeed);
 
 	return split(mnemonicSeed);
 }
