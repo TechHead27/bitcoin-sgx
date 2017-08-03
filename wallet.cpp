@@ -49,7 +49,7 @@ Wallet::Wallet(const std::string& filename)
     std::ifstream in(filename);
 
     std::getline(in, mnemonic);
-    Wallet(split(mnemonic));
+    *this = Wallet(split(mnemonic));
 }
 
 //display output
@@ -70,7 +70,7 @@ void Wallet::displayMnemonic(std::ostream& out)
 {
     if(wallet::validate_mnemonic(mnemonic))
     {
-        out << "\n" << join(mnemonic) << std::endl;
+        out << join(mnemonic) << std::endl;
 
     }else{
         out << "\n" << "Mnemonic Invalid! " << std::endl;
