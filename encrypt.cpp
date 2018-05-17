@@ -37,7 +37,7 @@ void Crypt::handleErrors(int error) {
 // Should probably set iv per file
 void Crypt::encryptFile(const char *name) {
 	FILE *inFile, *outFile;
-	int inLen, outLen;
+	int inLen;
 	BIO *out, *cipher;
 	unsigned char text[BLOCK_SIZE];
 

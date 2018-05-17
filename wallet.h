@@ -21,6 +21,8 @@ public:
 
     Wallet(const std::string& filename);
 
+    Wallet(const char *filename);
+
 	//display output
 	void dumpKeys();
 	void displayPrivateKey();

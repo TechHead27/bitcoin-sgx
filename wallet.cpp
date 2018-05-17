@@ -43,6 +43,11 @@ Wallet::Wallet(const wallet::word_list mnemonicSeed)
     publicKey = privateKey.to_public();
 }
 
+Wallet::Wallet(const char *filename)
+{
+    *this = Wallet(std::string(filename));
+}
+
 Wallet::Wallet(const std::string& filename)
 {
     std::string mnemonic;

@@ -93,5 +93,7 @@ int main(int argc, char *argv[])
 
     startServer(wallet);
 
+    delete wallet;
+
     return 0;
 }
